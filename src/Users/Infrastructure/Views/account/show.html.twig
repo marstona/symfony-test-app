@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block subtitle %}
+  <h1 class="title">Account</h1>
+{% endblock subtitle %}
+
+{% block body %}
+  <div class="container">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock body %}

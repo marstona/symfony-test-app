@@ -1,0 +1,30 @@
+App\Users\Domain\Entity\User:
+    type: entity
+    table: users
+    id:
+        id:
+            type: ulid_value
+            length: 26
+            generator:
+                strategy: NONE
+    fields:
+        email:
+            type: email_value
+            length: 255
+            unique: true
+        createdAt:
+            type: datetime
+        updatedAt:
+            type: datetime
+            nullable: true
+        passwordChangeRequired:
+            type: boolean
+            options:
+                default: true
+    oneToMany:
+        passwordHistory:
+            targetEntity: App\Users\Domain\Entity\UserPasswordHistory
+            orderBy: { 'createdAt': 'DESC' }
+            mappedBy: user
+            cascade: ["persist"]
+            fetch: EXTRA_LAZY

@@ -1,0 +1,8 @@
+twig:
+    paths: [
+        '%kernel.project_dir%/src/Users/Infrastructure/Views'
+    ]
+
+when@test:
+    twig:
+        strict_variables: true

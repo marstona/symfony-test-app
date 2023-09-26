@@ -1,0 +1,29 @@
+<nav class="navbar is-half" style="box-shadow: 1px -4px 18px #ccc;">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="/">
+      <h2>Symfony Test Project</h2>
+    </a>
+  </div>
+  <div id="nav" class="navbar-menu">
+    <div class="navbar-end">
+      <div class="navbar-item">
+        {% if is_granted('ROLE_USER') %}
+          <span class="tag is-white"><strong>{{ app.user.username }}</strong></span>
+          <div class="field is-grouped">
+            <div class="control">
+              <a class="button is-link" href="{{ path('change_password_page') }}">Change password</a>
+              <a class="button is-link" href="{{ path('import_users_page') }}">Import users</a>
+              <a class="button is-danger" href="{{ path('logout') }}">Logout</a>
+            </div>
+          </div>
+        {% else %}
+          <div class="field is-grouped">
+            <div class="control">
+              <a class="button is-link" href="{{ path('login') }}">Login</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

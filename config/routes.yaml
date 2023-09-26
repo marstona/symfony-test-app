@@ -1,0 +1,7 @@
+controllers:
+    resource: ../src/Shared/Infrastructure/Http/
+    type: annotation
+
+users_controllers:
+    resource: ../src/Users/Infrastructure/Http/
+    type: annotation

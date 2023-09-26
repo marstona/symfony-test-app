@@ -1,0 +1,64 @@
+framework:
+    messenger:
+        default_bus: command.bus
+        buses:
+            command.bus:
+#                default_middleware: false
+                middleware:
+#                    - doctrine_transaction
+#                    - doctrine_ping_connection
+#                    - handle_message
+            query.bus:
+#                default_middleware: false
+                middleware:
+#                    - handle_message
+            event.bus:
+                default_middleware: allow_no_handlers
+
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+
+        transports:
+            async_commands:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    delay: 2000
+                    max_retries: 5
+                    multiplier: 2
+                    max_delay: 0
+                options:
+                    exchange:
+                        type: topic
+                        name: commands
+                    queues:
+                        commands: ~
+            async_events:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    delay: 2000
+                    max_retries: 5
+                    multiplier: 2
+                    max_delay: 0
+                options:
+                    exchange:
+                        type: topic
+                        name: events
+                    queues:
+                        events: ~
+            failed:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                options:
+                    queues:
+                        failed: ~
+
+        routing:
+            App\Shared\Application\Command\AsyncCommandInterface: async_commands
+            App\Shared\Domain\Event\AsyncEventInterface: async_events
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'

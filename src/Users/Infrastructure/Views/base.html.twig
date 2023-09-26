@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Symfony Test Project{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  {% endblock %}
+</head>
+<body>
+{% include 'components/header/menu.html.twig' only %}
+
+<section class="section">
+  <div class="container">
+    <div class="content">
+      {% block subtitle %}{% endblock %}
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="is-centered">
+      {% for message in app.flashes('success') %}
+        <div class="notification is-success">{{ message }}</div>
+      {% endfor %}
+      {% for message in app.flashes('error') %}
+        <div class="notification is-danger">{{ message }}</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% block body %}{% endblock %}
+</section>
+{% block javascripts %}{% endblock %}
+<script>
+
+</script>
+</body>
+</html>
