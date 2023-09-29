@@ -1,0 +1,22 @@
+actor: AcceptanceTester
+modules:
+    enabled:
+        - App\Tests\Support\Helper\UserHelper
+        -   PhpBrowser:
+                url: http://nginx.test/
+        -   MailCatcher:
+                url: 'http://mailer.test'
+                port: '1080'
+        -   Symfony:
+                part: services
+                app_path: 'src/Shared/Infrastructure'
+                kernel_class: 'App\Shared\Infrastructure\Kernel'
+                environment: test
+                debug: true
+        -   Doctrine2:
+                depends: Symfony
+                cleanup: false
+step_decorators:
+    - Codeception\Step\ConditionalAssertion
+    - Codeception\Step\TryTo
+    - Codeception\Step\Retry

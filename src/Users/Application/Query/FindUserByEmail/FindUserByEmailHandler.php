@@ -10,11 +10,18 @@ use App\Users\Domain\Repository\UserRepositoryInterface;
 
 final class FindUserByEmailHandler implements QueryHandlerInterface
 {
+    /**
+     * @param UserRepositoryInterface $userRepository
+     */
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository
+        private readonly UserRepositoryInterface $userRepository,
     ) {
     }
 
+    /**
+     * @param  FindUserByEmailQuery  $query
+     * @return FindUserByEmailResult
+     */
     public function __invoke(FindUserByEmailQuery $query): FindUserByEmailResult
     {
         $user = $this->userRepository->findByEmail($query->email);

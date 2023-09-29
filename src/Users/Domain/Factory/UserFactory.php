@@ -9,18 +9,40 @@ use App\Users\Domain\Entity\User;
 use App\Users\Domain\Service\UserPasswordHasherInterface;
 use App\Users\Domain\ValueObject\EmailValue;
 use App\Users\Domain\ValueObject\PlainPasswordValue;
+use DateTimeInterface;
 
 readonly class UserFactory
 {
+    /**
+     * @param UserPasswordHasherInterface $passwordHasher
+     */
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
-    public function create(UlidValue $id, EmailValue $email, PlainPasswordValue $password): User
-    {
-        $user = new User($id, $email);
-        $user->setPassword($password, $this->passwordHasher);
+    /**
+     * @param  string                 $id
+     * @param  string                 $email
+     * @param  string                 $password
+     * @param  bool                   $passwordChangeRequired
+     * @param  DateTimeInterface|null $passwordCreatedAt
+     * @return User
+     */
+    public function create(
+        string $id,
+        string $email,
+        string $password,
+        bool $passwordChangeRequired = true,
+        DateTimeInterface $passwordCreatedAt = null
+    ): User {
+        $idValue = UlidValue::fromString($id);
+        $emailValue = EmailValue::fromString($email);
+        $passwordValue = PlainPasswordValue::fromString($password);
+
+        $user = new User($idValue, $emailValue);
+        $user->setPassword($passwordValue, $this->passwordHasher, $passwordCreatedAt);
+        $user->setPasswordChangeRequired($passwordChangeRequired);
 
         return $user;
     }

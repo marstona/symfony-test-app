@@ -22,18 +22,26 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 final class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
-    private const LOGIN = 'login';
-
-    private const SUCCESS_REDIRECT = 'account_show_page';
-
     private const CHANGE_PASSWORD = 'change_password_page';
 
+    private const LOGIN = 'login';
+
+    private const SUCCESS_REDIRECT = 'account_page';
+
+    /**
+     * @param CommandBusInterface   $commandBus
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(
         private readonly CommandBusInterface $commandBus,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
+    /**
+     * @param  Request  $request
+     * @return Passport
+     */
     public function authenticate(Request $request): Passport
     {
         try {
@@ -50,19 +58,15 @@ final class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         }
     }
 
-    private function getCredentials(Request $request): array
-    {
-        return [
-            'username' => $request->request->get('_username'),
-            'password' => $request->request->get('_password'),
-        ];
-    }
-
+    /**
+     * @param  Request        $request
+     * @param  TokenInterface $token
+     * @param  string         $firewallName
+     * @return Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        /**
-         * @var UserInterface $user
-         */
+        /** @var UserInterface $user */
         $user = $token->getUser();
         if ($user->isPasswordChangeRequired()) {
             return new RedirectResponse($this->urlGenerator->generate(self::CHANGE_PASSWORD));
@@ -71,8 +75,24 @@ final class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($this->urlGenerator->generate(self::SUCCESS_REDIRECT));
     }
 
+    /**
+     * @param  Request $request
+     * @return string
+     */
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN);
+    }
+
+    /**
+     * @param  Request $request
+     * @return array
+     */
+    private function getCredentials(Request $request): array
+    {
+        return [
+            'username' => $request->request->get('_username'),
+            'password' => $request->request->get('_password'),
+        ];
     }
 }

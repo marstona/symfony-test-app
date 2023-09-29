@@ -20,13 +20,11 @@ class User implements UserInterface
 {
     public const FORCE_PASSWORD_CHANGE_DAYS = 90;
 
-    private UlidValue $id;
+    private DateTimeInterface $createdAt;
 
     private EmailValue $email;
 
-    private DateTimeInterface $createdAt;
-
-    private ?DateTimeInterface $updatedAt = null;
+    private UlidValue $id;
 
     private bool $passwordChangeRequired = true;
 
@@ -38,6 +36,12 @@ class User implements UserInterface
      */
     private Collection $passwordHistory;
 
+    private ?DateTimeInterface $updatedAt = null;
+
+    /**
+     * @param UlidValue  $id
+     * @param EmailValue $email
+     */
     public function __construct(UlidValue $id, EmailValue $email)
     {
         $this->id = $id;
@@ -46,26 +50,66 @@ class User implements UserInterface
         $this->passwordHistory = new ArrayCollection();
     }
 
-    public function getUpdatedAt(): ?DateTimeInterface
+    /**
+     * @param  PlainPasswordValue          $plainPassword
+     * @param  UserPasswordHasherInterface $passwordHasher
+     * @return void
+     */
+    public function changePassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher): void
     {
-        return $this->updatedAt;
+        $this->setPassword($plainPassword, $passwordHasher);
+        $this->passwordChangeRequired = false;
+        $this->updatedAt = new DateTimeImmutable();
     }
 
-    public function setUpdatedAt(DateTime $dateTime): void
+    /**
+     * @return DateTimeInterface
+     */
+    public function getCreatedAt(): DateTimeInterface
     {
-        $this->updatedAt = $dateTime;
+        return $this->createdAt;
     }
 
-    public function getId(): UlidValue
-    {
-        return $this->id;
-    }
-
+    /**
+     * @return EmailValue
+     */
     public function getEmail(): EmailValue
     {
         return $this->email;
     }
 
+    /**
+     * @return UlidValue
+     */
+    public function getId(): UlidValue
+    {
+        return $this->id;
+    }
+
+    /**
+     * @throws EntityNotFoudException
+     */
+    public function getLatestPassword(): UserPasswordHistoryInterface|false
+    {
+        $passwordHistory = $this->passwordHistory->first();
+        if ($passwordHistory === false) {
+            throw new EntityNotFoudException('You must reset your password');
+        }
+
+        return $passwordHistory;
+    }
+
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getUpdatedAt(): ?DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @return bool
+     */
     public function isPasswordChangeRequired(): bool
     {
         if (! $this->passwordChangeRequired) {
@@ -78,38 +122,30 @@ class User implements UserInterface
     }
 
     /**
-     * @throws EntityNotFoudException
+     * @param  PlainPasswordValue          $plainPassword
+     * @param  UserPasswordHasherInterface $passwordHasher
+     * @param  DateTimeInterface|null      $createdAt
+     * @return void
      */
-    public function getLatestPassword(): UserPasswordHistoryInterface|false
-    {
-        $passwordHistory = $this->passwordHistory->first();
-        if (false === $passwordHistory) {
-            throw new EntityNotFoudException('You must reset your password');
-        }
-
-        return $passwordHistory;
-    }
-
-    public function getCreatedAt(): DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function changePassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher): void
-    {
-        $this->setPassword($plainPassword, $passwordHasher);
-        $this->passwordChangeRequired = false;
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
-    public function setPassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher): void
+    public function setPassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher, DateTimeInterface $createdAt = null): void
     {
         $id = UlidValue::fromString(Ulid::generate());
-        $this->passwordHistory->add(new UserPasswordHistory(
+        $latestPassword = new UserPasswordHistory(
             $id,
             $this,
             $plainPassword,
-            $passwordHasher
-        ));
+            $passwordHasher,
+            $createdAt
+        );
+        $this->passwordHistory->add($latestPassword);
+    }
+
+    /**
+     * @param  bool $passwordChangeRequired
+     * @return void
+     */
+    public function setPasswordChangeRequired(bool $passwordChangeRequired): void
+    {
+        $this->passwordChangeRequired = $passwordChangeRequired;
     }
 }

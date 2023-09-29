@@ -12,12 +12,19 @@ use Throwable;
 
 final class SymfonyMailer implements MailerInterface
 {
+    /**
+     * @param BaseMailer            $mailer
+     * @param ContainerBagInterface $params
+     */
     public function __construct(
         private readonly BaseMailer $mailer,
-        private readonly ContainerBagInterface $params
+        private readonly ContainerBagInterface $params,
     ) {
     }
 
+    /**
+     * @throws MailerException
+     */
     public function send(string $email, string $subject, string $template, array $context = []): void
     {
         try {

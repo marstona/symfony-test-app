@@ -8,22 +8,34 @@ use App\Shared\Application\Command\CommandBusInterface;
 use App\Shared\Application\Command\CommandHandlerInterface;
 use App\Users\Application\Command\CreateUser\CreateUserCommand;
 use App\Users\Application\Exception\ImportUsersException;
+use League\Csv\Exception;
 use League\Csv\Reader;
+use League\Csv\UnavailableStream;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
+use Throwable;
 
 final class ImportUsersFromCsvHandler implements CommandHandlerInterface
 {
+    /**
+     * @param CommandBusInterface $commandBus
+     * @param LoggerInterface     $logger
+     */
     public function __construct(
         private readonly CommandBusInterface $commandBus,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
-    public function __invoke(ImportUsersFromCsvCommand $cmd): void
+    /**
+     * @param  ImportUsersFromCsvCommand $command
+     * @return void
+     * @throws Exception
+     * @throws UnavailableStream
+     */
+    public function __invoke(ImportUsersFromCsvCommand $command): void
     {
-        $csv = Reader::createFromPath($cmd->filePath);
-        $csv->setHeaderOffset(0);
+        $csv = $this->createCsvReader($command->filePath);
 
         foreach ($csv as $record) {
             try {
@@ -36,14 +48,34 @@ final class ImportUsersFromCsvHandler implements CommandHandlerInterface
                 $password = (string) $record['password'];
 
                 $this->commandBus->handle(
-                    new CreateUserCommand($id, $email, $password)
+                    new CreateUserCommand($id, $email, $password),
                 );
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->logger->warning($e->getMessage());
             }
         }
+
+        unlink($command->filePath);
     }
 
+    /**
+     * @param  string            $filePath
+     * @return Reader
+     * @throws Exception
+     * @throws UnavailableStream
+     */
+    private function createCsvReader(string $filePath): Reader
+    {
+        $csv = Reader::createFromPath($filePath);
+        $csv->setHeaderOffset(0);
+
+        return $csv;
+    }
+
+    /**
+     * @param  array $record
+     * @return bool
+     */
     private function isValidCsvRow(array $record): bool
     {
         return isset($record['email'], $record['password']) && count($record) === 2;

@@ -15,16 +15,24 @@ use Symfony\Component\Uid\Ulid;
 use Webmozart\Assert\Assert;
 
 #[AsCommand(
-    name: 'app:users:create-user'
+    name: 'app:users:create-user',
 )]
 final class CreateUserConsoleCommand extends Command
 {
+    /**
+     * @param CommandBusInterface $commandBus
+     */
     public function __construct(
-        private readonly CommandBusInterface $commandBus
+        private readonly CommandBusInterface $commandBus,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @param  InputInterface  $input
+     * @param  OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -36,7 +44,7 @@ final class CreateUserConsoleCommand extends Command
                 Assert::email($input, 'Email is invalid');
 
                 return $input;
-            }
+            },
         );
 
         $password = $io->askHidden(
@@ -45,7 +53,7 @@ final class CreateUserConsoleCommand extends Command
                 Assert::notEmpty($input, 'Password cannot be empty');
 
                 return $input;
-            }
+            },
         );
 
         $ulid = Ulid::generate();

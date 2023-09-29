@@ -12,43 +12,62 @@ use DateTimeInterface;
 
 class UserPasswordHistory implements UserPasswordHistoryInterface
 {
-    private UlidValue $id;
+    private DateTimeInterface $createdAt;
 
-    private User $user;
+    private UlidValue $id;
 
     private string $password;
 
-    private DateTimeInterface $createdAt;
+    private User $user;
 
+    /**
+     * @param UlidValue                   $id
+     * @param User                        $user
+     * @param PlainPasswordValue          $plainPassword
+     * @param UserPasswordHasherInterface $passwordHasher
+     */
     public function __construct(
         UlidValue $id,
         User $user,
         PlainPasswordValue $plainPassword,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        DateTimeInterface $createdAt = null
     ) {
         $this->id = $id;
         $this->user = $user;
         $this->password = $passwordHasher->hash($plainPassword->toString(), $user->getEmail()->toString());
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = $createdAt === null ? new DateTimeImmutable() : $createdAt;
     }
 
+    /**
+     * @return DateTimeInterface
+     */
+    public function getCreatedAt(): DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return UlidValue
+     */
     public function getId(): UlidValue
     {
         return $this->id;
     }
 
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
+    /**
+     * @return string
+     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function getCreatedAt(): DateTimeInterface
+    /**
+     * @return User
+     */
+    public function getUser(): User
     {
-        return $this->createdAt;
+        return $this->user;
     }
 }

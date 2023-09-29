@@ -8,9 +8,13 @@ use App\Shared\Application\Command\CommandInterface;
 
 final readonly class LogInCommand implements CommandInterface
 {
+    /**
+     * @param string $email
+     * @param string $password
+     */
     public function __construct(
         public string $email,
-        public string $password
+        public string $password,
     ) {
     }
 }

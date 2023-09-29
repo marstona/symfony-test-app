@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/logout', name: 'logout', methods: ['GET'])]
 class LogoutGetAction
 {
+    /**
+     * @return Response
+     */
     public function __invoke(): Response
     {
         throw new RuntimeException('It should never have happened');

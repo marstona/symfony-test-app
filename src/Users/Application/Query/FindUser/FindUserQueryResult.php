@@ -9,8 +9,11 @@ use App\Users\Application\DTO\UserDTO;
 
 readonly class FindUserQueryResult implements QueryResultInterface
 {
+    /**
+     * @param UserDTO $user
+     */
     public function __construct(
-        public UserDTO $user
+        public UserDTO $user,
     ) {
     }
 }

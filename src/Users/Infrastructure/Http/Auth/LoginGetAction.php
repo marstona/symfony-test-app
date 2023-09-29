@@ -14,6 +14,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 #[Route('/login', name: 'login_page', methods: ['GET'])]
 class LoginGetAction extends AbstractController
 {
+    /**
+     * @param  AuthenticationUtils $authUtils
+     * @return Response
+     */
     public function __invoke(AuthenticationUtils $authUtils): Response
     {
         $error = $authUtils->getLastAuthenticationError();

@@ -19,11 +19,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/account/change-password', name: 'change_password', methods: ['POST'])]
 class ChangePasswordPostAction extends AbstractController
 {
+    /**
+     * @param CommandBusInterface $commandBus
+     */
     public function __construct(
-        private readonly CommandBusInterface $commandBus
+        private readonly CommandBusInterface $commandBus,
     ) {
     }
 
+    /**
+     * @param  Request  $request
+     * @return Response
+     */
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(ChangePasswordType::class);
@@ -38,13 +45,17 @@ class ChangePasswordPostAction extends AbstractController
         return $this->redirectToRoute('change_password_page');
     }
 
+    /**
+     * @param  FormInterface $form
+     * @return void
+     */
     public function process(FormInterface $form): void
     {
         try {
             $email = $this->getUser()->getUserIdentifier();
             $password = $form->get('password')->getData();
             $this->commandBus->handle(
-                new ChangePasswordCommand($email, $password)
+                new ChangePasswordCommand($email, $password),
             );
             $this->addFlash('success', 'Password changed successfully');
         } catch (DomainException $e) {

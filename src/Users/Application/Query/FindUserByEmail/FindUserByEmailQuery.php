@@ -9,8 +9,11 @@ use App\Users\Domain\ValueObject\EmailValue;
 
 final readonly class FindUserByEmailQuery implements QueryInterface
 {
+    /**
+     * @param EmailValue $email
+     */
     public function __construct(
-        public EmailValue $email
+        public EmailValue $email,
     ) {
     }
 }

@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+
+  App\Shared\Infrastructure\Bus\MessengerCommandBus:
+    public: true
+
+  App\Shared\Infrastructure\Bus\MessengerQueryBus:
+    public: true
+
+  App\Shared\Infrastructure\Bus\MessengerEventBus:
+    public: true
+
+  App\Users\Domain\Factory\:
+    resource: '../src/Users/Domain/Factory'
+    public: true
+  App\Users\Domain\Repository\:
+    resource: '../src/Users/Domain/Repository'
+    public: true

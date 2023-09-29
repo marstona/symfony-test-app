@@ -16,6 +16,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class CreateUserHandler implements CommandHandlerInterface
 {
+    /**
+     * @param UserRepositoryInterface $userRepository
+     * @param EntityManagerInterface  $entityManager
+     * @param UserFactory             $userFactory
+     * @param EventBusInterface       $eventBus
+     */
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -24,9 +30,17 @@ final class CreateUserHandler implements CommandHandlerInterface
     ) {
     }
 
-    public function __invoke(CreateUserCommand $cmd): void
+    /**
+     * @param  CreateUserCommand $command
+     * @return void
+     */
+    public function __invoke(CreateUserCommand $command): void
     {
-        $user = $this->userFactory->create($cmd->id, $cmd->email, $cmd->password);
+        $user = $this->userFactory->create(
+            $command->id->toString(),
+            $command->email->toString(),
+            $command->password->toString()
+        );
 
         try {
             $this->userRepository->add($user);
@@ -34,7 +48,7 @@ final class CreateUserHandler implements CommandHandlerInterface
 
             $userDTO = UserDTO::fromEntity($user);
             $this->eventBus->handle(
-                new UserCreatedEvent($userDTO)
+                new UserCreatedEvent($userDTO),
             );
         } catch (UniqueConstraintViolationException $e) {
             throw new EmailAlreadyExistsException('Email already exists');

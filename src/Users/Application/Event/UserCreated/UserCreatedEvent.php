@@ -9,8 +9,11 @@ use App\Users\Application\DTO\UserDTO;
 
 final readonly class UserCreatedEvent implements EventInterface
 {
+    /**
+     * @param UserDTO $userDTO
+     */
     public function __construct(
-        public UserDTO $userDTO
+        public UserDTO $userDTO,
     ) {
     }
 }

@@ -11,12 +11,17 @@ use App\Users\Domain\ValueObject\PlainPasswordValue;
 
 final readonly class CreateUserCommand implements AsyncCommandInterface
 {
-    public UlidValue $id;
-
     public EmailValue $email;
+
+    public UlidValue $id;
 
     public PlainPasswordValue $password;
 
+    /**
+     * @param string $id
+     * @param string $email
+     * @param string $password
+     */
     public function __construct(string $id, string $email, string $password)
     {
         $this->id = UlidValue::fromString($id);

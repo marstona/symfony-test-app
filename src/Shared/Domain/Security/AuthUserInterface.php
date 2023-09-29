@@ -7,9 +7,15 @@ namespace App\Shared\Domain\Security;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-interface AuthUserInterface extends UserInterface, PasswordAuthenticatedUserInterface
+interface AuthUserInterface extends PasswordAuthenticatedUserInterface, UserInterface
 {
-    public function getId(): string;
-
+    /**
+     * @return string
+     */
     public function getEmail(): string;
+
+    /**
+     * @return string
+     */
+    public function getId(): string;
 }

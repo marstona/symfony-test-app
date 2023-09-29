@@ -9,8 +9,11 @@ use App\Shared\Domain\ValueObject\UlidValue;
 
 final readonly class FindUserQuery implements QueryInterface
 {
+    /**
+     * @param UlidValue $id
+     */
     public function __construct(
-        public UlidValue $id
+        public UlidValue $id,
     ) {
     }
 }

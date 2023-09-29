@@ -17,7 +17,10 @@ interface UserRepositoryInterface
      */
     public function add(User $user): void;
 
-    public function remove(User $user): void;
+    /**
+     * @throws EntityNotFoudException
+     */
+    public function findByEmail(EmailValue $email): User;
 
     /**
      * @throws EntityNotFoudException
@@ -25,9 +28,13 @@ interface UserRepositoryInterface
     public function findById(UlidValue $ulid): User;
 
     /**
-     * @throws EntityNotFoudException
+     * @return array
      */
-    public function findByEmail(EmailValue $email): User;
-
     public function getUsers(): array;
+
+    /**
+     * @param  User $user
+     * @return void
+     */
+    public function remove(User $user): void;
 }

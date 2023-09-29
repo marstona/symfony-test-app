@@ -10,11 +10,18 @@ use App\Users\Domain\Repository\UserRepositoryInterface;
 
 final class FindUserQueryHandler implements QueryHandlerInterface
 {
+    /**
+     * @param UserRepositoryInterface $userRepository
+     */
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository
+        private readonly UserRepositoryInterface $userRepository,
     ) {
     }
 
+    /**
+     * @param  FindUserQuery       $query
+     * @return FindUserQueryResult
+     */
     public function __invoke(FindUserQuery $query): FindUserQueryResult
     {
         $user = $this->userRepository->findById($query->id);

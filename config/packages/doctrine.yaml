@@ -2,7 +2,7 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         types:
-            ulid_value: App\Users\Infrastructure\Database\Doctrine\Types\UlidValueType
+            ulid_value: App\Shared\Infrastructure\Database\Doctrine\Types\UlidValueType
             email_value: App\Users\Infrastructure\Database\Doctrine\Types\EmailValueType
 
     orm:
@@ -12,7 +12,7 @@ doctrine:
         mappings:
             Users:
                 is_bundle: false
-                type: yml
+                type: xml
                 dir: '%kernel.project_dir%/config/packages/doctrine/mapping/users'
                 prefix: 'App\Users\Domain\Entity'
                 alias: Users

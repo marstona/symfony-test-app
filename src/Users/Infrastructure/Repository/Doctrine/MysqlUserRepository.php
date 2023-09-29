@@ -15,34 +15,28 @@ use Doctrine\ORM\NoResultException;
 
 class MysqlUserRepository implements UserRepositoryInterface
 {
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
+    /**
+     * @param  User $user
+     * @return void
+     */
     public function add(User $user): void
     {
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }
 
-    public function remove(User $user): void
-    {
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
-    }
-
-    public function findById(UlidValue $ulid): User
-    {
-        try {
-            $user = $this->entityManager->find(User::class, $ulid);
-
-            return $user ?? throw new NoResultException();
-        } catch (NoResultException $e) {
-            throw new EntityNotFoudException();
-        }
-    }
-
+    /**
+     * @param  EmailValue $email
+     * @return User
+     */
     public function findByEmail(EmailValue $email): User
     {
         $qb = $this->entityManager
@@ -61,6 +55,24 @@ class MysqlUserRepository implements UserRepositoryInterface
         }
     }
 
+    /**
+     * @param  UlidValue $ulid
+     * @return User
+     */
+    public function findById(UlidValue $ulid): User
+    {
+        try {
+            $user = $this->entityManager->find(User::class, $ulid);
+
+            return $user ?? throw new NoResultException();
+        } catch (NoResultException $e) {
+            throw new EntityNotFoudException();
+        }
+    }
+
+    /**
+     * @return array
+     */
     public function getUsers(): array
     {
         $qb = $this->entityManager
@@ -69,5 +81,15 @@ class MysqlUserRepository implements UserRepositoryInterface
             ->from(User::class, 'u');
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param  User $user
+     * @return void
+     */
+    public function remove(User $user): void
+    {
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
     }
 }

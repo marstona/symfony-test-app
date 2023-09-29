@@ -15,6 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/account/change-password', name: 'change_password_page', methods: ['GET'])]
 class ChangePasswordGetAction extends AbstractController
 {
+    /**
+     * @param  Security $security
+     * @return Response
+     */
     public function __invoke(Security $security): Response
     {
         $form = $this->createForm(ChangePasswordType::class);

@@ -37,11 +37,26 @@ final readonly class PlainPasswordValue implements Stringable
         ],
     ];
 
+    /**
+     * @param string $plainPassword
+     */
     private function __construct(
-        private string $plainPassword
+        private string $plainPassword,
     ) {
     }
 
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param  string $plainPassword
+     * @return self
+     */
     public static function fromString(string $plainPassword): self
     {
         foreach (self::RULES as $rule) {
@@ -53,13 +68,11 @@ final readonly class PlainPasswordValue implements Stringable
         return new self($plainPassword);
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         return $this->__toString();
-    }
-
-    public function __toString(): string
-    {
-        return $this->plainPassword;
     }
 }

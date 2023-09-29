@@ -8,8 +8,11 @@ use App\Shared\Application\Command\AsyncCommandInterface;
 
 final readonly class ImportUsersFromCsvCommand implements AsyncCommandInterface
 {
+    /**
+     * @param string $filePath
+     */
     public function __construct(
-        public string $filePath
+        public string $filePath,
     ) {
     }
 }

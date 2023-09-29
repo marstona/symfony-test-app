@@ -17,21 +17,30 @@ use App\Users\Domain\ValueObject\EmailValue;
 
 final class LogInHandler implements CommandHandlerInterface
 {
+    /**
+     * @param UserPasswordHasherInterface $passwordHasher
+     * @param UserRepositoryInterface     $userRepository
+     * @param EventBusInterface           $eventBus
+     */
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserRepositoryInterface $userRepository,
-        private readonly EventBusInterface $eventBus
+        private readonly EventBusInterface $eventBus,
     ) {
     }
 
-    public function __invoke(LogInCommand $cmd): void
+    /**
+     * @param  LogInCommand $command
+     * @return void
+     */
+    public function __invoke(LogInCommand $command): void
     {
         try {
-            $emailValue = EmailValue::fromString($cmd->email);
+            $emailValue = EmailValue::fromString($command->email);
             $user = $this->userRepository->findByEmail($emailValue);
             $latestPassword = $user->getLatestPassword()->getPassword();
 
-            if (! $this->passwordHasher->verify($latestPassword, $cmd->password, $emailValue->toString())) {
+            if (! $this->passwordHasher->verify($latestPassword, $command->password, $emailValue->toString())) {
                 throw new PasswordVerificationException();
             }
 

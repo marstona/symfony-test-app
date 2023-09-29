@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/health-check', name: 'health_check', methods: ['GET'])]
 class HealthCheckAction
 {
+    /**
+     * @return Response
+     */
     public function __invoke(): Response
     {
         return new JsonResponse([

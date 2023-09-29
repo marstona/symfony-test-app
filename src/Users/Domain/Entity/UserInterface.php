@@ -11,13 +11,30 @@ use App\Users\Domain\ValueObject\PlainPasswordValue;
 
 interface UserInterface
 {
-    public function getId(): UlidValue;
+    /**
+     * @param  PlainPasswordValue          $plainPassword
+     * @param  UserPasswordHasherInterface $passwordHasher
+     * @return void
+     */
+    public function changePassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher): void;
 
+    /**
+     * @return EmailValue
+     */
     public function getEmail(): EmailValue;
 
+    /**
+     * @return UlidValue
+     */
+    public function getId(): UlidValue;
+
+    /**
+     * @return UserPasswordHistoryInterface|false
+     */
     public function getLatestPassword(): UserPasswordHistoryInterface|false;
 
+    /**
+     * @return bool
+     */
     public function isPasswordChangeRequired(): bool;
-
-    public function changePassword(PlainPasswordValue $plainPassword, UserPasswordHasherInterface $passwordHasher): void;
 }

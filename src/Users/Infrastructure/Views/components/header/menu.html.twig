@@ -8,11 +8,15 @@
     <div class="navbar-end">
       <div class="navbar-item">
         {% if is_granted('ROLE_USER') %}
-          <span class="tag is-white"><strong>{{ app.user.username }}</strong></span>
+          <span class="tag is-white">
+            <a class="button is-link" href="{{ path('account_page') }}">Account</a>
+          </span>
           <div class="field is-grouped">
             <div class="control">
               <a class="button is-link" href="{{ path('change_password_page') }}">Change password</a>
-              <a class="button is-link" href="{{ path('import_users_page') }}">Import users</a>
+
+              <a class="button is-dark" href="{{ path('users_page') }}">Users</a>
+              <a class="button is-dark" href="{{ path('import_users_page') }}">Import users</a>
               <a class="button is-danger" href="{{ path('logout') }}">Logout</a>
             </div>
           </div>
